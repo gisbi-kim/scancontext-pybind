@@ -20,7 +20,7 @@ ts = time.time()
 scd = scm.make_scancontext(cloud)
 te = time.time()
 print( f" The time cost of Scan Context Descriptor generation for the original cloud: {(te - ts)*1000:.2f} ms" )
-
+# e.g.,  The time cost of Scan Context Descriptor generation for the original cloud: 11.21 ms
 
 # downsampled cloud (scan context generally works well for downsampled clouds, please see T-RO paepr for the details)
 print('')
@@ -34,3 +34,4 @@ ts = time.time()
 scd = scm.make_scancontext(down_cloud)
 te = time.time()
 print( f" The time cost of Scan Context Descriptor generation for the downsample cloud: {(te - ts)*1000:.2f} ms" )
+# e.g.,  The time cost of Scan Context Descriptor generation for the downsample cloud: 2.84 ms
