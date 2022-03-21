@@ -31,10 +31,10 @@
   ```
 
 ## Docker support 
-- TBA 
+- see `docker/docker_run.sh`. Modify {YOUR_PATH} to the your path.
+- For the docker-based test tutorial, see this [video (TBA)](TBA)
 
-## Applications 
-### PyICP-SLAM2 
+## Application: PyICP-SLAM2
 - TBA ... 
 
 
