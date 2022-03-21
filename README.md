@@ -27,8 +27,7 @@
 ## Use examples  
 - For the hands-on exploration of the supported features, for example (you need `numpy` and `open3d`),
   ```
-   $ cd tests 
-   $ python3 test_make_desciptor.py
+   $ python3 tests/test_make_desciptor.py
   ```
 
 ## Docker support 
