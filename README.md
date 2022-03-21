@@ -1,5 +1,8 @@
 # scancontext-pybind
 
+## News 
+- Currently (Apr. 2022), not a set of full features are made yet. For checking the features currently supported, see `wrapper.cpp`.
+
 ## Purpose
 - Goal of this repo is 
   - For fast python support for lidar-based place recognition 
