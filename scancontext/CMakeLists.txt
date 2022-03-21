@@ -13,8 +13,6 @@ target_include_directories(scancontext PUBLIC
 target_link_libraries(scancontext 
   Eigen3::Eigen 
   nanoflann::nanoflann 
-  # ${PCL_LIBRARIES} 
-  # ${OpenCV_LIBRARIES} 
 )
 
 add_library(Scancontext::scancontext ALIAS scancontext)

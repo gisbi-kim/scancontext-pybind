@@ -153,23 +153,14 @@ std::pair<double, int> SCManager::distanceBtnScanContext( MatrixXd &_sc1, Matrix
 // MatrixXd SCManager::makeScancontext( pcl::PointCloud<SCPointType> & _scan_down )
 MatrixXd SCManager::makeScancontext( Eigen::MatrixX3d & _scan_down )
 {
-    // int num_pts_scan_down = _scan_down.points.size();
-
-    // main
     const int NO_POINT = -1000;
     MatrixXd desc = NO_POINT * MatrixXd::Ones(PC_NUM_RING, PC_NUM_SECTOR);
 
-    // SCPointType pt;
     float azim_angle, azim_range; // wihtin 2d plane
     int ring_idx, sctor_idx;
-    // for (int pt_idx = 0; pt_idx < num_pts_scan_down; pt_idx++)
-    // {
     for (int idx = 0; idx < _scan_down.rows(); ++idx) 
     {
         const auto &point = _scan_down.row(idx);
-        // pt.x = _scan_down.points[pt_idx].x; 
-        // pt.y = _scan_down.points[pt_idx].y;
-        // pt.z = _scan_down.points[pt_idx].z + LIDAR_HEIGHT; // naive adding is ok (all points should be > 0).
         const auto &ptx = point(0);
         const auto &pty = point(1);
         const auto &ptz = point(2);

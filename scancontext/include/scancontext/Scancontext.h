@@ -25,10 +25,8 @@ using std::atan2;
 using std::cos;
 using std::sin;
 
-// using SCPointType = pcl::PointXYZI; // using xyz only. but a user can exchange the original bin encoding function (i.e., max hegiht) to max intensity (for detail, refer 20 ICRA Intensity Scan Context)
 using KeyMat = std::vector<std::vector<float> >;
 using InvKeyTree = KDTreeVectorOfVectorsAdaptor< KeyMat, float >;
-
 
 // namespace SC2
 // {
@@ -40,12 +38,10 @@ float xy2theta( const float & _x, const float & _y );
 MatrixXd circshift( MatrixXd &_mat, int _num_shift );
 std::vector<float> eig2stdvec( MatrixXd _eigmat );
 
-
 class SCManager
 {
 public: 
     SCManager( ) = default; // reserving data space (of std::vector) could be considered. but the descriptor is lightweight so don't care.
-    // SCManager( ){}; // reserving data space (of std::vector) could be considered. but the descriptor is lightweight so don't care.
 
     Eigen::MatrixXd makeScancontext( Eigen::MatrixX3d & _scan_down );
     Eigen::MatrixXd makeRingkeyFromScancontext( Eigen::MatrixXd &_desc );
@@ -70,10 +66,11 @@ public:
         return polarcontexts_[_idx];
     }
 
-    /* to be added ...
+    /* to be added ... (some get/setters)
         getSCD
         getKey
-        distanceBtnScanContext
+        setThres
+        ...
     */
 
 public:
@@ -92,7 +89,7 @@ public:
 
     // loop thres
     const double SEARCH_RATIO = 0.1; // for fast comparison, no Brute-force, but search 10 % is okay. // not was in the original conf paper, but improved ver.
-    double SC_DIST_THRES = 0.13; // empirically 0.1-0.2 is fine (rare false-alarms) for 20x60 polar context (but for 0.15 <, DCS or ICP fit score check (e.g., in LeGO-LOAM) should be required for robustness)
+    double SC_DIST_THRES = 0.2; // empirically 0.1-0.2 is fine (rare false-alarms) for 20x60 polar context (but for 0.15 <, DCS or ICP fit score check (e.g., in LeGO-LOAM) should be required for robustness)
     // const double SC_DIST_THRES = 0.5; // 0.4-0.6 is good choice for using with robust kernel (e.g., Cauchy, DCS) + icp fitness threshold / if not, recommend 0.1-0.15
 
     // config 
