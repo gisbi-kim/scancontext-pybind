@@ -49,3 +49,9 @@ distance_btn_negative_pair, t2 = calc_scd_dist_and_time(query_scd, negative_scd)
 print( f" The time cost of SCD distance calculation is: {((t1 + t2)/2)*1000:.2f} ms" )
 print( f" The SCD distance between the positive pair is: {distance_btn_positive_pair:.3f}" )
 print( f" The SCD distance between the negative pair is: {distance_btn_negative_pair:.3f}" )
+''' 
+ the result is, for example, 
+    The time cost of SCD distance calculation is: 2.81 ms
+    The SCD distance between the positive pair is: 0.190
+    The SCD distance between the negative pair is: 0.776
+'''
