@@ -23,16 +23,19 @@
   ```
    $  export PYTHONPATH=$PYTHONPATH:{YOUR_PATH}/build/python
   ```
+  - If you use docker image, you can add the above path addition command as a default. See `/root/.bashrc`.
 
 ## Use examples  
 - For the hands-on exploration of the supported features, for example (you need `numpy` and `open3d`),
   ```
    $ python3 examples/test_make_desciptor.py
+   $ python3 examples/test_compare_scd.py
+   $ # to be added ...
   ```
 
 ## Docker support 
-- see `docker/docker_run.sh`. Modify {YOUR_PATH} to the your path.
-- For the docker-based test tutorial, see this [video (TBA)](TBA)
+- see `docker/docker_run.sh`. Modify the REPOSITORY_PATH with your own path.
+  - For the docker-based test tutorial, see this [video (TBA)](TBA)
 
 ## Application: PyICP-SLAM2
 - TBA ... 

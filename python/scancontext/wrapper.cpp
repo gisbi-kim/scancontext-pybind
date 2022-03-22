@@ -14,6 +14,7 @@ PYBIND11_MODULE(pyscancontext, m) {
     py::class_<SCManager>(m, "SCManager")
         .def(py::init<>())
         .def("print_parameters", &SCManager::printParameters, py::return_value_policy::copy)
+        .def("scd_distance", &SCManager::distanceBtnScanContext, py::return_value_policy::copy)
         .def("make_scancontext", &SCManager::makeScancontext, py::return_value_policy::copy);
 
 }
