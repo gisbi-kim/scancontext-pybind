@@ -1,28 +1,12 @@
 // #include "scancontext/Scancontext.h"
 #include "Scancontext.h"
 
-// namespace SC2
-// {
-
-void coreImportTest (void)
-{
-    cout << "scancontext lib is successfully imported." << endl;
-} // coreImportTest
-
-
-float rad2deg(float radians)
-{
-    return radians * 180.0 / M_PI;
-}
-
-float deg2rad(float degrees)
+double deg2rad(double degrees)
 {
     return degrees * M_PI / 180.0;
 }
 
-
-// float xy2theta( const float & _x, const float & _y )
-float xy2theta( const double & _x, const double & _y )
+double xy2theta( const double & _x, const double & _y )
 {
     if ( _x >= 0 & _y >= 0) 
         return (180/M_PI) * atan(_y / _x);
@@ -35,8 +19,7 @@ float xy2theta( const double & _x, const double & _y )
 
     else // ( _x >= 0 & _y < 0)
         return 360 - ( (180/M_PI) * atan((-_y) / _x) );
-} // xy2theta
-
+}
 
 MatrixXd circshift( MatrixXd &_mat, int _num_shift )
 {
@@ -156,7 +139,7 @@ MatrixXd SCManager::makeScancontext( Eigen::MatrixX3d & _scan_down )
     const int NO_POINT = -1000;
     MatrixXd desc = NO_POINT * MatrixXd::Ones(PC_NUM_RING, PC_NUM_SECTOR);
 
-    float azim_angle, azim_range; // wihtin 2d plane
+    double azim_angle, azim_range; // wihtin 2d plane
     int ring_idx, sctor_idx;
     for (int idx = 0; idx < _scan_down.rows(); ++idx) 
     {
@@ -223,9 +206,8 @@ MatrixXd SCManager::makeSectorkeyFromScancontext( Eigen::MatrixXd &_desc )
 } // SCManager::makeSectorkeyFromScancontext
 
 
-void SCManager::makeAndSaveScancontextAndKeys( Eigen::MatrixX3d & _scan_down )
+void SCManager::saveScancontextAndKeys(Eigen::MatrixXd& sc)
 {
-    Eigen::MatrixXd sc = makeScancontext(_scan_down); // v1 
     Eigen::MatrixXd ringkey = makeRingkeyFromScancontext( sc );
     Eigen::MatrixXd sectorkey = makeSectorkeyFromScancontext( sc );
     std::vector<float> polarcontext_invkey_vec = eig2stdvec( ringkey );
@@ -234,37 +216,41 @@ void SCManager::makeAndSaveScancontextAndKeys( Eigen::MatrixX3d & _scan_down )
     polarcontext_invkeys_.push_back( ringkey );
     polarcontext_vkeys_.push_back( sectorkey );
     polarcontext_invkeys_mat_.push_back( polarcontext_invkey_vec );
+} 
 
-    // cout <<polarcontext_vkeys_.size() << endl;
+void SCManager::makeAndSaveScancontextAndKeys(Eigen::MatrixX3d& _scan_down)
+{
+    Eigen::MatrixXd sc = makeScancontext(_scan_down); // v1 
+    saveScancontextAndKeys(sc);
+} 
 
-} // SCManager::makeAndSaveScancontextAndKeys
+void SCManager::constructTree(void) 
+{
+    polarcontext_invkeys_to_search_.clear();
+    polarcontext_invkeys_to_search_.assign( polarcontext_invkeys_mat_.begin(), polarcontext_invkeys_mat_.end() - NUM_EXCLUDE_RECENT ) ;
 
+    polarcontext_tree_.reset(); 
+    polarcontext_tree_ = std::make_unique<InvKeyTree>(PC_NUM_RING /* dim */, polarcontext_invkeys_to_search_, 10 /* max leaf */ );
+}
 
-std::pair<int, float> SCManager::detectLoopClosureID ( void )
+std::tuple<int, double, double> SCManager::detectLoopClosureID ( void )
 {
     int loop_id { -1 }; // init with -1, -1 means no loop (== LeGO-LOAM's variable "closestHistoryFrameID")
 
     auto curr_key = polarcontext_invkeys_mat_.back(); // current observation (query)
     auto curr_desc = polarcontexts_.back(); // current observation (query)
 
-    /* 
-     * step 1: candidates from ringkey tree_
-     */
+    // step 1: candidates from ringkey tree_
     if( polarcontext_invkeys_mat_.size() < NUM_EXCLUDE_RECENT + 1)
     {
-        std::pair<int, float> result {loop_id, 0.0};
+        std::tuple<int, double, double> result {loop_id, 0.0, 0.0};
         return result; // Early return 
     }
 
     // tree_ reconstruction (not mandatory to make everytime)
     if( tree_making_period_conter % TREE_MAKING_PERIOD_ == 0) // to save computation cost
     {
-        polarcontext_invkeys_to_search_.clear();
-        polarcontext_invkeys_to_search_.assign( polarcontext_invkeys_mat_.begin(), polarcontext_invkeys_mat_.end() - NUM_EXCLUDE_RECENT ) ;
-
-        polarcontext_tree_.reset(); 
-        polarcontext_tree_ = std::make_unique<InvKeyTree>(PC_NUM_RING /* dim */, polarcontext_invkeys_to_search_, 10 /* max leaf */ );
-        // tree_ptr_->index->buildIndex(); // inernally called in the constructor of InvKeyTree (for detail, refer the nanoflann and KDtreeVectorOfVectorsAdaptor)
+        constructTree();
     }
     tree_making_period_conter = tree_making_period_conter + 1;
         
@@ -280,9 +266,7 @@ std::pair<int, float> SCManager::detectLoopClosureID ( void )
     knnsearch_result.init( &candidate_indexes[0], &out_dists_sqr[0] );
     polarcontext_tree_->index->findNeighbors( knnsearch_result, &curr_key[0] /* query */, nanoflann::SearchParams(10) ); 
 
-    /* 
-     *  step 2: pairwise distance (find optimal columnwise best-fit using cosine distance)
-     */
+    // step 2: pairwise distance (find optimal columnwise best-fit using cosine distance)
     for ( int candidate_iter_idx = 0; candidate_iter_idx < NUM_CANDIDATES_FROM_TREE; candidate_iter_idx++ )
     {
         MatrixXd polarcontext_candidate = polarcontexts_[ candidate_indexes[candidate_iter_idx] ];
@@ -292,38 +276,18 @@ std::pair<int, float> SCManager::detectLoopClosureID ( void )
         int candidate_align = sc_dist_result.second;
 
         if( candidate_dist < min_dist )
-        {
+        {            
             min_dist = candidate_dist;
             nn_align = candidate_align;
 
             nn_idx = candidate_indexes[candidate_iter_idx];
+
+            loop_id = nn_idx;
         }
     }
 
-    /* 
-     * loop threshold check
-     */
-    if( min_dist < SC_DIST_THRES )
-    {
-        loop_id = nn_idx; 
-    
-        // std::cout.precision(3); 
-        cout << "[Loop found] Nearest distance: " << min_dist << " btn " << polarcontexts_.size()-1 << " and " << nn_idx << "." << endl;
-        cout << "[Loop found] yaw diff: " << nn_align * PC_UNIT_SECTORANGLE << " deg." << endl;
-    }
-    else
-    {
-        std::cout.precision(3); 
-        cout << "[Not loop] Nearest distance: " << min_dist << " btn " << polarcontexts_.size()-1 << " and " << nn_idx << "." << endl;
-        cout << "[Not loop] yaw diff: " << nn_align * PC_UNIT_SECTORANGLE << " deg." << endl;
-    }
-
-    // To do: return also nn_align (i.e., yaw diff)
-    float yaw_diff_rad = deg2rad(nn_align * PC_UNIT_SECTORANGLE);
-    std::pair<int, float> result {loop_id, yaw_diff_rad};
+    double yaw_diff_rad = deg2rad(nn_align * PC_UNIT_SECTORANGLE);
+    std::tuple<int, double, double> result {loop_id, min_dist, yaw_diff_rad};
 
     return result;
-
-} // SCManager::detectLoopClosureID
-
-// } // namespace SC2
+} 

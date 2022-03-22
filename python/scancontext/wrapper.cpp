@@ -15,6 +15,9 @@ PYBIND11_MODULE(pyscancontext, m) {
         .def(py::init<>())
         .def("print_parameters", &SCManager::printParameters, py::return_value_policy::copy)
         .def("scd_distance", &SCManager::distanceBtnScanContext, py::return_value_policy::copy)
-        .def("make_scancontext", &SCManager::makeScancontext, py::return_value_policy::copy);
-
+        .def("make_scancontext", &SCManager::makeScancontext, py::return_value_policy::copy)
+        .def("construct_tree", &SCManager::constructTree, py::return_value_policy::copy)
+        .def("add_scancontext", &SCManager::saveScancontextAndKeys, py::return_value_policy::copy)
+        .def("add_node", &SCManager::makeAndSaveScancontextAndKeys, py::return_value_policy::copy)
+        .def("detect_loop", &SCManager::detectLoopClosureID, py::return_value_policy::copy);
 }

@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <utility>
+#include <tuple>
 #include <vector>
 #include <algorithm> 
 #include <cstdlib>
@@ -51,9 +52,11 @@ public:
     double distDirectSC ( MatrixXd &_sc1, MatrixXd &_sc2 ); // "d" (eq 5) in the original paper (IROS 18)
     std::pair<double, int> distanceBtnScanContext ( MatrixXd &_sc1, MatrixXd &_sc2 ); // "D" (eq 6) in the original paper (IROS 18)
 
-    // User-side API
+    void constructTree(void);
+
+    void saveScancontextAndKeys( Eigen::MatrixXd & sc );
     void makeAndSaveScancontextAndKeys( Eigen::MatrixX3d & _scan_down );
-    std::pair<int, float> detectLoopClosureID( void ); // int: nearest node index, float: relative yaw  
+    std::tuple<int, double, double> detectLoopClosureID( void ); // int: nearest node index, float: relative yaw  
 
     void printParameters(void) {
         cout << "NUM_RING: " << PC_NUM_RING << endl; 
