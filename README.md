@@ -9,21 +9,24 @@
     - ps. the native python version (see https://github.com/gisbi-kim/PyICP-SLAM) was already supported, but it was slow.  
   - Original C++ code: see https://github.com/irapkaist/scancontext
 
-## Build 
-- Dependency: eigen, nanoflann, and pybind11 (for details, see CMakeLists.txt)
-  - ps. this [KCP](https://github.com/StephLin/KCP) repo kindly explains how to install them.  
-- for the build, follow these lines,  
+## Build
+- Please ensure eigen3 is installed (e.g., via `sudo apt install libeigen3-dev`)
+- Other dependencies (nanoflann and pybind11) are downloaded automatically (for details, see `CMakeLists.txt`)
+- Use the following commands to build:
   ```
    $ mkdir build
    $ cd build
    $ cmake ..
    $ make
   ```
-- NOTE: You also need to add path before the use. 
+- Install the Python package via `pip` with
   ```
-   $  export PYTHONPATH=$PYTHONPATH:{YOUR_PATH}/build/python
+  $ cd build
+  $ make pip-install
+  # or install manually with
+  $ cd build/python
+  $ pip install .
   ```
-  - If you use docker image, you can add the above path addition command as a default. See `/root/.bashrc`.
 
 ## Use examples  
 - For the hands-on exploration of the supported features, for example (you need `numpy` and `open3d`),
