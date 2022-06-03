@@ -8,13 +8,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose build type." FORCE)
 endif()
 
-# if(CMAKE_VERSION VERSION_LESS "3.15")
-#   include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/ListPrepend.cmake")
-#   list_prepend(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# else()
-#   list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# endif()
-
 include(FetchContent)
 
 ###############################################################################
