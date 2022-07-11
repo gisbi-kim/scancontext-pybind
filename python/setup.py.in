@@ -1,0 +1,12 @@
+from setuptools import setup
+
+setup(
+    name='pyscancontext',
+    version='${PROJECT_VERSION}',
+    author='Giseop Kim',
+    author_email='giseop.kim@naverlabs.com',
+    description='Scan Context for LiDAR place recognition',
+    package_dir={'': '${CMAKE_CURRENT_BINARY_DIR}'},
+    packages=['pyscancontext'],
+    package_data={'': ['*.so']}
+)

@@ -10,6 +10,8 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(pyscancontext, m) {
+    m.doc() = "Scan Context for LiDAR place recognition";
+    m.attr("__version__") = PROJECT_VERSION;
 
     py::class_<SCManager>(m, "SCManager")
         .def(py::init<>())
