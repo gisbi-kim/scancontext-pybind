@@ -19,6 +19,13 @@
    $ cmake ..
    $ make
   ```
+- CMake doesn’t detect the right Python version
+The CMake-based build system will try to automatically detect the installed version of Python and link against that. When this fails, or when there are multiple versions of Python and it finds the wrong one, delete CMakeCache.txt and then add -DPYTHON_EXECUTABLE=$(which python) to your CMake configure line. (Replace $(which python) with a path to python if your prefer.)
+
+You can alternatively try -DPYBIND11_FINDPYTHON=ON, which will activate the new CMake FindPython support instead of pybind11’s custom search. Requires CMake 3.12+, and 3.15+ or 3.18.2+ are even better. You can set this in your CMakeLists.txt before adding or finding pybind11, as well.
+
+
+
 - Install the Python package via `pip` with
   ```
   $ cd build
